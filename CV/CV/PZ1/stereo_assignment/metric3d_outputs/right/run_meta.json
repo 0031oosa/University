@@ -1,0 +1,18 @@
+{
+  "hf_model_id": "onnx-community/metric3d-vit-large",
+  "onnx_path": "onnx/model.onnx",
+  "local_onnx_path": "C:\\Users\\bogd\\.cache\\huggingface\\hub\\models--onnx-community--metric3d-vit-large\\snapshots\\7d679e55ebc155d3f7c919371f0784080fb5f5bd\\onnx\\model.onnx",
+  "providers": [
+    "CPUExecutionProvider"
+  ],
+  "target_size_hw": [
+    518,
+    518
+  ],
+  "ensure_multiple_of": 14,
+  "keep_aspect_ratio": true,
+  "rescale_to_0_1": false,
+  "canonical_focal_px": 1000.0,
+  "fx_orig_px": 1583.6632080078125,
+  "note": "depth_metric = depth_canonical * (fx_input / canonical_focal_px); fx_input = fx_orig * scale_eff"
+}

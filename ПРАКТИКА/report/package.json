@@ -1,0 +1,13 @@
+{
+  "name": "p2p-drops-report",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Сборка отчёта по практике (docx) из report_assets/ и итоговой статистики сбора",
+  "main": "build_report.js",
+  "scripts": {
+    "build-report": "node build_report.js"
+  },
+  "dependencies": {
+    "docx": "^9.7.1"
+  }
+}

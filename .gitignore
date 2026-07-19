@@ -1,0 +1,32 @@
+# Scope: this repo tracks CV/, ML/, NLP/ only.
+# Blockchain/ and КНИР/ are excluded (Blockchain has its own separate git repo).
+/Blockchain/
+/КНИР/
+
+# Python
+.venv/
+.vevn/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node.js
+node_modules/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code local state
+.claude/
+
+# Third-party course reference repo (clone separately: sadekovlar/cv_book)
+/CV/CV/PZ5/cv_book/

@@ -1,0 +1,18 @@
+%YAML:1.0
+---
+deviceType: Camera
+K: !!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [ 4.6450000000000000e+02, 0., 4.8310000000000002e+02, 0.,
+       4.6450000000000000e+02, 288., 0., 0., 1. ]
+D: !!opencv-matrix
+   rows: 5
+   cols: 1
+   dt: d
+   data: [ 0., 0., 0., 0., 0. ]
+sz: [ 960, 540 ]
+remapped:
+   []
+dm: simple

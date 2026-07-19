@@ -1,0 +1,19 @@
+{
+  "height_m": 2.342914961371061,
+  "pitch_deg": 0.0025996430207916106,
+  "roll_deg": -1.6207024003413706,
+  "plane_rmse_m": 0.029488729234284892,
+  "num_ground_points": 2066,
+  "pitch_rad": 4.537233008930501e-05,
+  "roll_rad": -0.028286593080932187,
+  "ground_normal_lidar": [
+    -4.537233007369202e-05,
+    -0.02828282103772425,
+    0.9995999599707373
+  ],
+  "source_laz": "D:\\Shared\\Documents\\Уник\\CV\\PZ3\\3DCV\\Module_11\\9pz\\experiment\\robosenseCapture\\xt1.021.003.robosenseCapture_620069.laz",
+  "vehicle_frame": {
+    "axes": "x_forward_y_left_z_up",
+    "ground_plane_z": 0.0
+  }
+}

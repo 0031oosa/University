@@ -1,0 +1,7 @@
+%YAML:1.0
+---
+target_type: 'aprilgrid' # Type of the calibration target
+tagCols: 6               # Number of columns of tags
+tagRows: 6               # Number of rows of tags
+tagSize: 0.02            # Size of a tag (m)
+tagSpacing: 0.3          # Relative space between tags (0.3 = 30% of tagSize)

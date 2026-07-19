@@ -1,0 +1,38 @@
+# venv
+venv/
+.venv/
+.venv_*/
+venv_*/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Videos
+*.mp4
+*.mov
+
+# Images (если это не нужно в репо)
+*.png
+*.jpg
+*.jpeg
+
+# Archives
+*.zip
+*.7z
+
+# IDE
+.vscode/
+.idea/
+
+# system
+.DS_Store
+Thumbs.db
+
+# Lections
+Lections/
+ 
+*.env
