@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chicken Gun</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', Arial, sans-serif; color: #fff; user-select: none; }
+  canvas#game { display: block; }
+  .hidden { display: none !important; }
+  .shadow { text-shadow: 0 2px 3px rgba(0,0,0,.7); }
+
+  /* ---- Menu ---- */
+  #menu { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(10,20,40,.55); z-index: 20; }
+  .panel { background: rgba(20,24,38,.92); border: 3px solid #ffd23f; border-radius: 18px; padding: 28px 34px; width: 420px; max-width: calc(100vw - 32px); box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+  .logo { font-size: 46px; font-weight: 900; text-align: center; color: #ffd23f; letter-spacing: 2px; line-height: 1; text-shadow: 3px 3px 0 #e63946, 6px 6px 0 rgba(0,0,0,.4); }
+  .sub { text-align: center; color: #bbb; margin: 8px 0 18px; font-size: 14px; }
+  label { display: block; font-size: 13px; color: #aaa; margin: 12px 0 5px; text-transform: uppercase; letter-spacing: 1px; }
+  input[type=text] { width: 100%; padding: 10px 12px; border-radius: 8px; border: 2px solid #444; background: #111; color: #fff; font-size: 17px; outline: none; }
+  input[type=text]:focus { border-color: #ffd23f; }
+  input[type=range] { width: 100%; accent-color: #ffd23f; }
+  #colors { display: flex; flex-wrap: wrap; gap: 8px; }
+  .swatch { width: 30px; height: 30px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; box-shadow: 0 0 0 1px #555; }
+  .swatch.sel { border-color: #ffd23f; transform: scale(1.12); }
+  #play { margin-top: 20px; width: 100%; padding: 13px; font-size: 22px; font-weight: 800; border: none; border-radius: 10px; background: #e63946; color: #fff; cursor: pointer; letter-spacing: 1px; }
+  #play:hover { background: #ff4d5a; }
+  #status { margin-top: 10px; text-align: center; color: #ff8fab; min-height: 18px; font-size: 14px; }
+  .controls { margin-top: 14px; font-size: 12.5px; color: #999; line-height: 1.6; columns: 2; }
+  .controls b { color: #ddd; }
+
+  /* ---- HUD ---- */
+  #hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+  #crosshair { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+  #crosshair i { position: absolute; background: #fff; box-shadow: 0 0 2px #000; }
+  #crosshair .h { width: 8px; height: 2px; top: -1px; }
+  #crosshair .v { width: 2px; height: 8px; left: -1px; }
+  #crosshair .l { right: var(--g, 4px); } #crosshair .r { left: var(--g, 4px); } #crosshair .t { bottom: var(--g, 4px); } #crosshair .b { top: var(--g, 4px); }
+  #crosshair .dot { width: 2px; height: 2px; left: -1px; top: -1px; }
+  #hitmarker { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; opacity: 0; }
+  #hitmarker::before, #hitmarker::after { content: ''; position: absolute; left: 12px; top: 0; width: 2px; height: 26px; background: currentColor; }
+  #hitmarker::before { transform: rotate(45deg); } #hitmarker::after { transform: rotate(-45deg); }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(220,0,0,.75) 100%); opacity: 0; }
+  #scope { position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 0, transparent 34vh, #000 34.3vh); }
+  #scope::before, #scope::after { content: ''; position: absolute; background: #000; }
+  #scope::before { left: 50%; top: 16vh; bottom: 16vh; width: 2px; margin-left: -1px; }
+  #scope::after { top: 50%; left: calc(50% - 34vh); right: calc(50% - 34vh); height: 2px; margin-top: -1px; }
+
+  #bottomLeft { position: absolute; left: 24px; bottom: 22px; }
+  #hpBox { display: flex; align-items: center; gap: 10px; }
+  #hpNum { font-size: 40px; font-weight: 900; min-width: 74px; }
+  #hpBar { width: 220px; height: 14px; background: rgba(0,0,0,.5); border-radius: 7px; overflow: hidden; border: 2px solid rgba(255,255,255,.6); }
+  #hpFill { height: 100%; width: 100%; background: linear-gradient(90deg, #57cc99, #80ed99); transition: width .15s; }
+  #eggs { font-size: 18px; margin-top: 6px; }
+  #bottomRight { position: absolute; right: 24px; bottom: 22px; text-align: right; }
+  #ammo { font-size: 44px; font-weight: 900; }
+  #ammo small { font-size: 20px; color: #ccc; }
+  #weaponName { font-size: 18px; color: #ffd23f; font-weight: 700; }
+  #slots { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
+  #slots div { padding: 3px 8px; background: rgba(0,0,0,.4); border-radius: 5px; font-size: 12px; color: #aaa; border: 1px solid transparent; }
+  #slots div.on { color: #fff; border-color: #ffd23f; background: rgba(255,210,63,.2); }
+  #reloadMsg { position: absolute; left: 50%; top: 58%; transform: translateX(-50%); font-weight: 700; color: #ffd23f; }
+
+  #topInfo { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.35); padding: 5px 14px; border-radius: 8px; font-size: 14px; }
+  #killfeed { position: absolute; top: 14px; right: 16px; display: flex; flex-direction: column; gap: 5px; align-items: flex-end; }
+  #killfeed div { background: rgba(0,0,0,.5); padding: 5px 10px; border-radius: 6px; font-size: 14px; animation: fadeIn .2s; }
+  #killfeed div.mine { border: 1px solid #ffd23f; }
+  #killfeed .wpn { color: #ffd23f; margin: 0 6px; font-size: 12px; }
+  #notice { position: absolute; left: 50%; top: 32%; transform: translateX(-50%); font-size: 22px; font-weight: 800; color: #ff4d5a; opacity: 0; transition: opacity .3s; white-space: nowrap; }
+
+  #chat { position: absolute; left: 20px; bottom: 130px; width: 380px; }
+  #chatLog div { background: rgba(0,0,0,.35); padding: 3px 8px; margin-top: 3px; border-radius: 4px; font-size: 14px; transition: opacity 1s; word-wrap: break-word; }
+  #chatInput { width: 100%; margin-top: 5px; padding: 6px 9px; border-radius: 5px; border: 1px solid #ffd23f; background: rgba(0,0,0,.7); color: #fff; font-size: 14px; outline: none; pointer-events: auto; }
+
+  .center-overlay { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; }
+  #death h1 { font-size: 54px; color: #e63946; font-weight: 900; }
+  #death p { font-size: 20px; margin-top: 8px; }
+  #matchEnd { background: rgba(10,15,30,.85); padding: 26px 40px; border-radius: 16px; border: 3px solid #ffd23f; }
+  #matchEnd h1 { font-size: 42px; color: #ffd23f; }
+
+  #scoreboard { background: rgba(10,15,30,.85); padding: 20px 26px; border-radius: 14px; min-width: 420px; }
+  #scoreboard h2, #matchEnd h2 { margin-bottom: 10px; color: #ffd23f; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th { text-align: left; color: #999; font-size: 12px; text-transform: uppercase; padding: 4px 8px; }
+  td { padding: 6px 8px; border-top: 1px solid rgba(255,255,255,.1); }
+  tr.me td { color: #ffd23f; font-weight: 700; }
+  .dotc { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; border: 1px solid #000; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; } }
+</style>
+<script type="importmap">
+  { "imports": { "three": "/vendor/three.module.js" } }
+</script>
+</head>
+<body>
+
+<div id="menu">
+  <div class="panel">
+    <div class="logo">🐔 CHICKEN GUN</div>
+    <div class="sub">LAN deathmatch: first to <span id="limitTxt">20</span> kills wins the farm</div>
+    <div id="joinFields">
+      <label>Chicken name</label>
+      <input type="text" id="name" maxlength="16" placeholder="Your name">
+      <label>Feather color</label>
+      <div id="colors"></div>
+    </div>
+    <label>Mouse sensitivity</label>
+    <input type="range" id="sens" min="0.2" max="3" step="0.05" value="1">
+    <label>Volume</label>
+    <input type="range" id="vol" min="0" max="1" step="0.05" value="0.6">
+    <button id="play">PLAY</button>
+    <div id="status"></div>
+    <div class="controls">
+      <b>WASD</b> move<br><b>Space</b> jump<br><b>Shift</b> sprint<br><b>Mouse</b> aim / shoot<br>
+      <b>Right click</b> zoom / scope<br><b>R</b> reload<br><b>1-4 / Wheel</b> weapons<br>
+      <b>G</b> throw egg grenade<br><b>V</b> 3rd person<br><b>Tab</b> scores<br><b>T / Enter</b> chat<br><b>Esc</b> menu
+    </div>
+  </div>
+</div>
+
+<div id="hud" class="hidden">
+  <div id="vignette"></div>
+  <div id="scope" class="hidden"></div>
+  <div id="crosshair"><i class="h l"></i><i class="h r"></i><i class="v t"></i><i class="v b"></i><i class="dot"></i></div>
+  <div id="hitmarker"></div>
+  <div id="topInfo" class="shadow"></div>
+  <div id="killfeed" class="shadow"></div>
+  <div id="notice" class="shadow"></div>
+  <div id="reloadMsg" class="shadow hidden">RELOADING…</div>
+  <div id="chat"><div id="chatLog" class="shadow"></div><input id="chatInput" class="hidden" maxlength="140" placeholder="Say something… (Enter to send, Esc to cancel)"></div>
+  <div id="bottomLeft" class="shadow">
+    <div id="hpBox"><div id="hpNum">100</div><div id="hpBar"><div id="hpFill"></div></div></div>
+    <div id="eggs"></div>
+  </div>
+  <div id="bottomRight" class="shadow">
+    <div id="ammo">12 <small>/ ∞</small></div>
+    <div id="weaponName">Pistol</div>
+    <div id="slots"></div>
+  </div>
+  <div id="death" class="center-overlay shadow hidden"><h1>FRIED!</h1><p id="deathBy"></p><p id="deathTimer"></p></div>
+  <div id="scoreboard" class="center-overlay hidden"></div>
+  <div id="matchEnd" class="center-overlay hidden"></div>
+</div>
+
+<script type="module" src="/game.js"></script>
+</body>
+</html>

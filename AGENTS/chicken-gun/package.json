@@ -1,0 +1,14 @@
+{
+  "name": "chicken-gun",
+  "version": "1.0.0",
+  "description": "LAN multiplayer browser FPS where chickens shoot each other",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "three": "^0.170.0",
+    "ws": "^8.18.0"
+  }
+}
